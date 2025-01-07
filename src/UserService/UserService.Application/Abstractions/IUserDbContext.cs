@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using UserService.Domain.Entities.Auth;
+using UserService.Domain.Entities;
 
 namespace UserService.Application.Abstractions;
 
 public interface IUserDbContext
 {
-    DbSet<User> Users { get; set; }
+    DbSet<UserBan> UsersBans { get; set; }
 
     public ValueTask<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
