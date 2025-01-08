@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using UserService.Domain.Entities.Auth;
 using UserService.Application.Abstractions;
+using UserService.Domain.Entities.Auth;
 using UserService.Domain.Entities;
 
-namespace UserService.Infrastructure.Persistance;
+namespace UserService.Infrastructure.Persistence;
 
 public class UserDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>, IUserDbContext
 {

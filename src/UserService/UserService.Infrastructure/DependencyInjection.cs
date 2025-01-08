@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using UserService.Application.Abstractions;
-using UserService.Infrastructure.Persistance;
+using UserService.Infrastructure.Persistence;
 
 namespace UserService.Infrastructure;
 
