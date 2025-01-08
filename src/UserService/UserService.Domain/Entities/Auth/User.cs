@@ -5,6 +5,7 @@ namespace UserService.Domain.Entities.Auth;
 public class User : IdentityUser<Guid>
 {
     public string Name { get; set; }
+    public string Surname { get; set; }
     public DateTime Birthday { get; set; }
     public string? ProfilePicture { get; set; }
     public decimal Wallet { get; set; }

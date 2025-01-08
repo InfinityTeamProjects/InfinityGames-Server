@@ -42,24 +42,24 @@ public class DataSeeder(IConfiguration configuration, RoleManager<IdentityRole<G
     private async Task SeedAdminAsync()
     {
         string name = _configuration["AdminSettings:Name"]!;
-        string password = _configuration["AdminSettings:Password"]!;
+        string surname = _configuration["AdminSettings:Surname"]!;
+        string username = _configuration["AdminSettings:UserName"]!;
         string email = _configuration["AdminSettings:Email"]!;
-        string phoneNumber = _configuration["AdminSettings:PhoneNumber"]!;
 
         if (await _userManager.FindByNameAsync(name) == null)
         {
             var admin = new User()
             {
                 Name = name,
-                UserName = name,
+                Surname = surname,
+                UserName = username,
                 Email = email,
-                PhoneNumber = phoneNumber,
                 Wallet = 100000000000,
                 Birthday = new DateTime(2005, 8, 14),
                 ProfilePicture = "https://ih1.redbubble.net/image.2955130987.9629/raf,360x360,075,t,fafafa:ca443f4786.jpg",
             };
 
-            var result = await _userManager.CreateAsync(admin, password);
+            var result = await _userManager.CreateAsync(admin, username);
 
             if (result.Succeeded)
             {

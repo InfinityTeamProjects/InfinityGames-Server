@@ -1,11 +1,10 @@
 ﻿using MediatR;
-using UserService.Domain.Entities.Auth;
+using UserService.Domain.Entities.DTOs;
 
 namespace UserService.Application.UseCases.Users.Auths.Commands;
 
-public class LoginUserCommand : IRequest<User>
+public class LoginUserCommand : IRequest<Response>
 {
-    public string Name { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
 }
