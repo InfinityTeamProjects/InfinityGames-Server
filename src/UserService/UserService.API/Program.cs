@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
+using Scalar.AspNetCore;
 using Serilog;
+using UserService.API.Configurations;
 using UserService.API.Middlewares;
 using UserService.Application;
 using UserService.Domain.Entities.Auth;
@@ -28,7 +30,7 @@ namespace UserService.API
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+            builder.Services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSecuritySchemeTransformer>(); });
 
             builder.Services.AddInfrastructure(builder.Configuration);
             builder.Services.AddApplication();
@@ -57,6 +59,13 @@ namespace UserService.API
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+                app.MapScalarApiReference(options =>
+                {
+                    options.Title = "Infinity Games Store API";
+                    options.Theme = ScalarTheme.BluePlanet;
+                    options.DefaultHttpClient = new(ScalarTarget.CSharp, ScalarClient.HttpClient);
+                    options.ShowSidebar = true;
+                });
             }
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();
@@ -79,44 +88,6 @@ namespace UserService.API
                 var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
                 seeder.SeedDataAsync().GetAwaiter().GetResult();
             }
-
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-
-            //    var roles = builder.Configuration.GetSection("Roles").Get<string[]>();
-
-            //    for (short i = 0; i < roles!.Length; i++)
-            //    {
-            //        if (!roleManager.RoleExistsAsync(roles[i]).Result)
-            //            roleManager.CreateAsync(new IdentityRole<Guid>(roles[i])).Wait();
-            //    }
-            //}
-
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-
-            //    string login = builder.Configuration["AdminSettings:Name"]!.ToString();
-            //    string password = builder.Configuration["AdminSettings:Password"]!.ToString();
-
-            //    if (userManager.FindByNameAsync(login).Result == null)
-            //    {
-            //        var user = new User()
-            //        {
-            //            Name = login,
-            //            UserName = login,
-            //            Email = builder.Configuration["AdminSettings:Email"]!.ToString(),
-            //            PhoneNumber = builder.Configuration["AdminSettings:PhoneNumber"]!.ToString(),
-            //            Wallet = 100000000000,
-            //            Birthday = new DateTime(2005, 8, 14),
-            //            ProfilePicture = "https://ih1.redbubble.net/image.2955130987.9629/raf,360x360,075,t,fafafa:ca443f4786.jpg",
-            //        };
-
-            //        userManager.CreateAsync(user, password).Wait();
-            //        userManager.AddToRoleAsync(user, "Admin").Wait();
-            //    }
-            //}
 
             app.Run();
         }

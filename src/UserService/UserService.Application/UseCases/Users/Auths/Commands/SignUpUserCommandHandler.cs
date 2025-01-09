@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System.Globalization;
 using UserService.Application.Abstractions;
+using UserService.Application.UseCases.Users.Commands;
 using UserService.Domain.Entities.Auth;
 using UserService.Domain.Entities.DTOs;
 using UserService.Domain.Exceptions;
@@ -21,22 +21,10 @@ public class SignUpUserCommandHandler(ITokenService tokenService, UserManager<Us
         if (await _userManager.FindByEmailAsync(request.Email) != null)
             throw new CustomException(400, "Пользователь с таким адресом электронной почты уже существует.");
 
-        var user = new User()
-        {
-            Name = request.Name,
-            Surname = request.Surname,
-            UserName = request.Username,
-            Birthday = DateTime.Parse(request.Birthday, CultureInfo.InvariantCulture),
-            Email = request.Email
-        };
+        await CreateUserAsync(request, cancellationToken);
 
-        var result = await _userManager.CreateAsync(user, request.Password);
+        var user = await _userManager.FindByNameAsync(request.Username);
 
-        if (!result.Succeeded)
-            throw new Exception("Ошибка при создании пользователя!");
-
-        await _userManager.AddToRoleAsync(user, "User");
-        
         string token = _tokenService.GenerateTokenToUser(user);
 
         return new Response()
@@ -45,5 +33,21 @@ public class SignUpUserCommandHandler(ITokenService tokenService, UserManager<Us
             StatusCode = 201,
             Message = "Success"
         };
+    }
+
+    private async ValueTask CreateUserAsync(SignUpUserCommand request, CancellationToken cancellationToken)
+    {
+        var createUserCommand = new CreateUserCommand()
+        {
+            Name = request.Name,
+            Surname = request.Surname,
+            Username = request.Username,
+            Birthday = request.Birthday,
+            Email = request.Email,
+            Password = request.Password
+        };
+
+        var createUserCommandHandler = new CreateUserCommandHandler(_userManager);
+        await createUserCommandHandler.Handle(createUserCommand, cancellationToken);
     }
 }

@@ -34,7 +34,7 @@ public class DataSeeder(IConfiguration configuration, RoleManager<IdentityRole<G
                 var result = await _roleManager.CreateAsync(new IdentityRole<Guid>(roles[i]));
 
                 if (!result.Succeeded)
-                    throw new Exception($"Ошибка создания роли '{roles[i]}'!\n{result.Errors.Select(e => e.Description)}");
+                    throw new Exception($"Ошибка при создании роли '{roles[i]}'!\n{result}");
             }
         }
     }
@@ -46,7 +46,7 @@ public class DataSeeder(IConfiguration configuration, RoleManager<IdentityRole<G
         string username = _configuration["AdminSettings:UserName"]!;
         string email = _configuration["AdminSettings:Email"]!;
 
-        if (await _userManager.FindByNameAsync(name) == null)
+        if (await _userManager.FindByNameAsync(username) == null)
         {
             var admin = new User()
             {
@@ -55,7 +55,7 @@ public class DataSeeder(IConfiguration configuration, RoleManager<IdentityRole<G
                 UserName = username,
                 Email = email,
                 Wallet = 100000000000,
-                Birthday = new DateTime(2005, 8, 14),
+                Birthday = DateTime.SpecifyKind(new DateTime(2005, 8, 14), DateTimeKind.Utc),
                 ProfilePicture = "https://ih1.redbubble.net/image.2955130987.9629/raf,360x360,075,t,fafafa:ca443f4786.jpg",
             };
 
@@ -66,7 +66,7 @@ public class DataSeeder(IConfiguration configuration, RoleManager<IdentityRole<G
                 await _userManager.AddToRoleAsync(admin, "Admin");
             }
             else
-                throw new Exception($"Ошибка создания администратора!\n{result.Errors.Select(e => e.Description)}");
+                throw new Exception($"Ошибка при создании администратора!\n{result}");
         }
     }
 }
