@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using UserService.Domain.Commons;
 using UserService.Domain.Entities.Auth;
 
 namespace UserService.Domain.Entities;
 
-public class UserBan
+public class UserBan : Auditable
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }

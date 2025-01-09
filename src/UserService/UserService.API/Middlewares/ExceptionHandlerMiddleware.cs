@@ -1,5 +1,4 @@
-﻿using UserService.API.Models;
-using UserService.Domain.Entities;
+﻿using UserService.Domain.Entities.DTOs;
 using UserService.Domain.Exceptions;
 
 namespace UserService.API.Middlewares;

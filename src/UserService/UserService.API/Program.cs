@@ -1,10 +1,14 @@
 using Microsoft.AspNetCore.Identity;
+using Scalar.AspNetCore;
 using Serilog;
+using UserService.API.Configurations;
 using UserService.API.Middlewares;
 using UserService.Application;
 using UserService.Domain.Entities.Auth;
 using UserService.Infrastructure;
-using UserService.Infrastructure.Persistance;
+using UserService.Infrastructure.Configurations;
+using UserService.Infrastructure.Persistence;
+using UserService.Infrastructure.Seeders;
 
 namespace UserService.API
 {
@@ -26,7 +30,7 @@ namespace UserService.API
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+            builder.Services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSecuritySchemeTransformer>(); });
 
             builder.Services.AddInfrastructure(builder.Configuration);
             builder.Services.AddApplication();
@@ -45,18 +49,31 @@ namespace UserService.API
                 });
             });
 
+            builder.Services.Configure<JWTConfiguration>(builder.Configuration.GetSection(nameof(JWTConfiguration)));
+
+            builder.Services.AddScoped<DataSeeder>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+                app.MapScalarApiReference(options =>
+                {
+                    options.Title = "Infinity Games Store API";
+                    options.Theme = ScalarTheme.BluePlanet;
+                    options.DefaultHttpClient = new(ScalarTarget.CSharp, ScalarClient.HttpClient);
+                    options.ShowSidebar = true;
+                });
             }
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();
             app.UseMiddleware<TimingMiddleware>();
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles();
 
             app.UseCors();
 
@@ -65,6 +82,12 @@ namespace UserService.API
             app.UseAuthorization();
 
             app.MapControllers();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+                seeder.SeedDataAsync().GetAwaiter().GetResult();
+            }
 
             app.Run();
         }

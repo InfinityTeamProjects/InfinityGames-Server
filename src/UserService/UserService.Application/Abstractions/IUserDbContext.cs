@@ -5,7 +5,7 @@ namespace UserService.Application.Abstractions;
 
 public interface IUserDbContext
 {
-    DbSet<UserBan> UsersBans { get; set; }
+    DbSet<UserBan> UserBans { get; set; }
 
-    public ValueTask<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    ValueTask<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
