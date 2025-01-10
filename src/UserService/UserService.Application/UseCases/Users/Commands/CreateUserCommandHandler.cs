@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System.Globalization;
+using UserService.Application.Extensions;
 using UserService.Domain.Entities.Auth;
 using UserService.Domain.Entities.DTOs;
 
@@ -17,7 +17,7 @@ public class CreateUserCommandHandler(UserManager<User> userManager) : IRequestH
             Name = request.Name,
             Surname = request.Surname,
             UserName = request.Username,
-            Birthday = DateTime.SpecifyKind(DateTime.Parse(request.Birthday, CultureInfo.InvariantCulture), DateTimeKind.Utc),
+            Birthday = DateFormatExtension.ToDateTime(request.Birthday),
             Email = request.Email
         };
 

@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Application.UseCases.Users.Auths.Commands;
 using UserService.Domain.Entities.DTOs;
@@ -25,11 +24,5 @@ namespace UserService.API.Controllers
             var result = await _mediator.Send(command);
             return result;
         }
-
-        //[HttpGet("Check")]
-        //public IActionResult Check()
-        //{
-        //    return Ok("Works!");
-        //}
     }
 }

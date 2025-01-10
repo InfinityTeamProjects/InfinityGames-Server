@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using System.Data;
+using UserService.Application.Extensions;
 using UserService.Domain.Entities.Auth;
 using UserService.Domain.Exceptions;
 
@@ -55,7 +55,7 @@ public class DataSeeder(IConfiguration configuration, RoleManager<IdentityRole<G
                 UserName = username,
                 Email = email,
                 Wallet = 100000000000,
-                Birthday = DateTime.SpecifyKind(new DateTime(2005, 8, 14), DateTimeKind.Utc),
+                Birthday = DateFormatExtension.ToDateTime("2005/08/14"),
                 ProfilePicture = "https://ih1.redbubble.net/image.2955130987.9629/raf,360x360,075,t,fafafa:ca443f4786.jpg",
             };
 
