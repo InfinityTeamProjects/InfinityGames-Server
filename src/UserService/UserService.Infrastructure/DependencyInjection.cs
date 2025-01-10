@@ -21,20 +21,20 @@ public static class DependencyInjection
         services.AddScoped<ITokenService, TokenService>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-           .AddJwtBearer(options =>
-           {
-               options.TokenValidationParameters = new TokenValidationParameters
-               {
-                   ValidateIssuer = true,
-                   ValidateAudience = true,
-                   ValidateLifetime = true,
-                   ValidateIssuerSigningKey = true,
-                   ValidIssuer = configuration["JWTConfiguration:ValidIssuer"],
-                   ValidAudience = configuration["JWTConfiguration:ValidAudience"],
-                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTConfiguration:Secret"])),
-                   ClockSkew = TimeSpan.Zero
-               };
-           });
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = configuration["JWTConfiguration:ValidIssuer"],
+                    ValidAudience = configuration["JWTConfiguration:ValidAudience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTConfiguration:Secret"])),
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
 
         services.AddAuthorization(options =>
         {

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
+using UserService.Domain.Entities.DTOs;
 
-namespace UserService.Application.UseCases.Users.Commands
+namespace UserService.Application.UseCases.Users.Commands;
+
+public class DeleteUserCommand : IRequest<Response>
 {
-    public class DeleteUserCommand
-    {
-    }
+    public Guid Id { get; set; }
 }

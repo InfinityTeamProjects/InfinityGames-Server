@@ -32,12 +32,12 @@ namespace UserService.API
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSecuritySchemeTransformer>(); });
 
+            builder.Services.AddIdentity<User, IdentityRole<Guid>>()
+                            .AddEntityFrameworkStores<UserDbContext>()
+                            .AddDefaultTokenProviders();
+
             builder.Services.AddInfrastructure(builder.Configuration);
             builder.Services.AddApplication();
-
-            builder.Services.AddIdentity<User, IdentityRole<Guid>>()
-                .AddEntityFrameworkStores<UserDbContext>()
-                .AddDefaultTokenProviders();
 
             builder.Services.AddCors(options =>
             {

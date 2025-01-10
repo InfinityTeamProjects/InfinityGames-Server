@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using UserService.Application.UseCases.Users.Auths.Commands;
+using UserService.Application.UseCases.Users.Commands;
 using UserService.Domain.Entities.DTOs;
 
 namespace UserService.API.Controllers
@@ -11,15 +11,22 @@ namespace UserService.API.Controllers
     {
         private readonly IMediator _mediator = mediator;
 
-        [HttpPost("SignUp")]
-        public async Task<Response> SignUpUserAsync(SignUpUserCommand command)
+        [HttpPost]
+        public async ValueTask<Response> CreateUserAsync(CreateUserCommand command)
         {
             var result = await _mediator.Send(command);
             return result;
         }
 
-        [HttpPost("Login")]
-        public async Task<Response> LoginUserAsync(LoginUserCommand command)
+        [HttpPut("{id}")]
+        public async ValueTask<Response> UpdateUserAsync(UpdateUserCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return result;
+        }
+
+        [HttpDelete("{id}")]
+        public async ValueTask<Response> DeleteUserAsync(DeleteUserCommand command)
         {
             var result = await _mediator.Send(command);
             return result;

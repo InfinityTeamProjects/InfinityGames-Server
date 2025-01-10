@@ -21,10 +21,12 @@ public class UserDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>, 
     async ValueTask<int> IUserDbContext.SaveChangesAsync(CancellationToken cancellationToken)
         => await base.SaveChangesAsync(cancellationToken);
 
-    //protected override void OnModelCreating(ModelBuilder builder)
-    //{
-    //    base.OnModelCreating(builder);
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
 
-    //    builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-    //}
+        builder.Entity<User>().HasQueryFilter(u => !u.IsDeleted);
+
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+    }
 }
