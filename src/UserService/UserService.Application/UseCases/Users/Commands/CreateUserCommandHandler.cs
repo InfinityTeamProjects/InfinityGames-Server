@@ -1,8 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System.Globalization;
+using UserService.Application.Extensions;
 using UserService.Domain.Entities.Auth;
 using UserService.Domain.Entities.DTOs;
+using UserService.Domain.Exceptions;
 
 namespace UserService.Application.UseCases.Users.Commands;
 
@@ -12,27 +13,36 @@ public class CreateUserCommandHandler(UserManager<User> userManager) : IRequestH
 
     public async Task<Response> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
+        if (await _userManager.FindByNameAsync(request.Username) != null)
+            throw new CustomException(400, "Пользователь с таким именем уже существует.");
+
+        if (await _userManager.FindByEmailAsync(request.Email) != null)
+            throw new CustomException(400, "Пользователь с таким адресом электронной почты уже существует.");
+
         var user = new User()
         {
             Name = request.Name,
             Surname = request.Surname,
             UserName = request.Username,
-            Birthday = DateTime.SpecifyKind(DateTime.Parse(request.Birthday, CultureInfo.InvariantCulture), DateTimeKind.Utc),
+            Birthday = DateFormatExtension.ToDateTime(request.Birthday),
             Email = request.Email
         };
 
-        var result = await _userManager.CreateAsync(user, request.Password);
+        var creationResult = await _userManager.CreateAsync(user, request.Password);
 
-        if (!result.Succeeded)
-            throw new Exception($"Ошибка при создании пользователя!\n{result}");
+        if (!creationResult.Succeeded)
+            throw new Exception($"Ошибка при создании пользователя!\n{creationResult}");
 
-        await _userManager.AddToRoleAsync(user, "User");
+        var roleResult = await _userManager.AddToRoleAsync(user, "User");
+
+        if (!roleResult.Succeeded)
+            throw new Exception($"Ошибка при создании пользователя!\n{roleResult}");
 
         return new Response()
         {
             Token = "",
             StatusCode = 201,
-            Message = "Success"
+            Message = "Пользователь успешно создан"
         };
     }
 }
