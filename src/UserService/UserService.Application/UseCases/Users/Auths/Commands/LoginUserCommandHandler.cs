@@ -36,7 +36,7 @@ public class LoginUserCommandHandler(ITokenService tokenService, UserManager<Use
         {
             Token = token,
             StatusCode = 200,
-            Message = "Успешный вход"
+            Message = "Успешный вход!"
         };
     }
 }

@@ -27,8 +27,8 @@ public class DeleteUserCommandHandler(IUserDbContext dbContext, UserManager<User
         return new Response()
         {
             Token = "",
-            StatusCode = 201,
-            Message = "Пользователь успешно удалён"
+            StatusCode = 200,
+            Message = "Пользователь успешно удалён!"
         };
     }
 }
