@@ -19,9 +19,9 @@ public class LoginUserCommandHandler(ITokenService tokenService, UserManager<Use
         if (user == null)
             throw new CustomException(400, "Адрес электронной почты и пароль не совпадают.");
 
-        var checker = await _userManager.CheckPasswordAsync(user, request.Password);
+        var passwordChecker = await _userManager.CheckPasswordAsync(user, request.Password);
 
-        if (!checker)
+        if (!passwordChecker)
             throw new CustomException(400, "Адрес электронной почты и пароль не совпадают.");
 
         string token = null;
