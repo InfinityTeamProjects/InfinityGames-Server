@@ -14,7 +14,7 @@ public class CreateUserCommandHandler(UserManager<User> userManager) : IRequestH
     public async Task<Response> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         if (await _userManager.FindByNameAsync(request.Username) != null)
-            throw new CustomException(400, "Пользователь с таким именем уже существует.");
+            throw new CustomException(400, "Пользователь с таким именем пользователя уже существует.");
 
         if (await _userManager.FindByEmailAsync(request.Email) != null)
             throw new CustomException(400, "Пользователь с таким адресом электронной почты уже существует.");
@@ -41,8 +41,8 @@ public class CreateUserCommandHandler(UserManager<User> userManager) : IRequestH
         return new Response()
         {
             Token = "",
-            StatusCode = 201,
-            Message = "Пользователь успешно создан"
+            StatusCode = 200,
+            Message = "Пользователь успешно создан!"
         };
     }
 }
