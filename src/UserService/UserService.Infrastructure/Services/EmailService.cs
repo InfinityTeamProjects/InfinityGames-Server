@@ -3,7 +3,7 @@ using System.Net.Mail;
 using System.Net;
 using UserService.Application.Abstractions;
 
-namespace UserService.Application.Services;
+namespace UserService.Infrastructure.Services;
 
 public class EmailService(IConfiguration configuration) : IEmailService
 {
