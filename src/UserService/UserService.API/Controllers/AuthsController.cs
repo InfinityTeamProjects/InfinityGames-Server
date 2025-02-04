@@ -17,5 +17,19 @@ namespace UserService.API.Controllers
             var result = await _mediator.Send(command);
             return result;
         }
+
+        [HttpPost("SignUp")]
+        public async ValueTask<Response> SignUpUserAsync(SignUpUserCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return result;
+        }
+
+        [HttpPost("EmailConfirmation")]
+        public async ValueTask<Response> ConfirmEmailAsync(ConfirmEmailCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return result;
+        }
     }
 }

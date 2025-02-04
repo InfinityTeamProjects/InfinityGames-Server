@@ -22,7 +22,7 @@ public class UserDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>, 
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<User>().HasQueryFilter(u => !u.IsDeleted || u.EmailConfirmed);
+        builder.Entity<User>().HasQueryFilter(u => !u.IsDeleted);
 
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
