@@ -26,6 +26,9 @@ public class RedisService : IRedisService
     {
         var value = await _database.StringGetAsync(key);
 
+        if (value == RedisValue.Null)
+            return default(T);
+
         return JsonConvert.DeserializeObject<T>(value);
     }
 

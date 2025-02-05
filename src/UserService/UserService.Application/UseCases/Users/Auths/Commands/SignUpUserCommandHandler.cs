@@ -3,21 +3,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UserService.Application.Abstractions;
 using UserService.Application.Extensions;
-using UserService.Application.UseCases.Users.Commands;
 using UserService.Domain.Entities.Auth;
 using UserService.Domain.Entities.DTOs;
 using UserService.Domain.Exceptions;
 
 namespace UserService.Application.UseCases.Users.Auths.Commands;
 
-public class SignUpUserCommandHandler(UserManager<User> userManager, IUserDbContext dbContext, IRedisService redisService, IEmailService emailService) : IRequestHandler<CreateUserCommand, Response>
+public class SignUpUserCommandHandler(UserManager<User> userManager, IUserDbContext dbContext, IRedisService redisService, IEmailService emailService) : IRequestHandler<SignUpUserCommand, Response>
 {
     private readonly UserManager<User> _userManager = userManager;
     private readonly IUserDbContext _dbContext = dbContext;
     private readonly IRedisService _redisService = redisService;
     private readonly IEmailService _emailService = emailService;
 
-    public async Task<Response> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Response> Handle(SignUpUserCommand request, CancellationToken cancellationToken)
     {
         if (await _userManager.FindByNameAsync(request.Username) != null)
             throw new CustomException(400, "Пользователь с таким именем уже существует.");
@@ -25,7 +24,7 @@ public class SignUpUserCommandHandler(UserManager<User> userManager, IUserDbCont
         var user = await _userManager.Users.IgnoreQueryFilters()
                                                 .FirstOrDefaultAsync(u => u.Email == request.Email);
 
-        if (user != null && !user.IsDeleted)
+        if (user != null && !user.IsDeleted && user.EmailConfirmed)
             throw new CustomException(400, "Пользователь с таким адресом электронной почты уже существует.");
 
         else if (user != null)
@@ -43,7 +42,7 @@ public class SignUpUserCommandHandler(UserManager<User> userManager, IUserDbCont
             var passwordChangeResult = await _userManager.ResetPasswordAsync(user, resetToken, request.Password);
 
             if (!passwordChangeResult.Succeeded)
-                throw new Exception($"Ошибка при создании пользователя!\n{passwordChangeResult}");
+                throw new Exception($"Ошибка при создании пользователя! {passwordChangeResult}");
         }
         else
         {
@@ -60,12 +59,12 @@ public class SignUpUserCommandHandler(UserManager<User> userManager, IUserDbCont
             var creationResult = await _userManager.CreateAsync(user, request.Password);
 
             if (!creationResult.Succeeded)
-                throw new Exception($"Ошибка при создании пользователя!\n{creationResult}");
+                throw new Exception($"Ошибка при создании пользователя! {creationResult}");
 
             var roleResult = await _userManager.AddToRoleAsync(user, "User");
 
             if (!roleResult.Succeeded)
-                throw new Exception($"Ошибка при создании пользователя!\n{roleResult}");
+                throw new Exception($"Ошибка при создании пользователя! {roleResult}");
         }
 
         var confirmationCode = new Random().Next(100000, 999999).ToString();
