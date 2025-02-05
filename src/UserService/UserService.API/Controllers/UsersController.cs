@@ -13,42 +13,42 @@ namespace UserService.API.Controllers
         private readonly IMediator _mediator = mediator;
 
         [HttpPost]
-        public async ValueTask<ActionResult<Response>> CreateUserAsync(CreateUserCommand command)
+        public async ValueTask<ActionResult<Response>> CreateUserAsync([FromBody] CreateUserCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpPut("{id}")]
-        public async ValueTask<ActionResult<Response>> UpdateUserAsync(UpdateUserCommand command)
+        public async ValueTask<ActionResult<Response>> UpdateUserAsync([FromBody] UpdateUserCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpPatch("{id}")]
-        public async ValueTask<ActionResult<Response>> UpdateUserRoleAsync(UpdateUserRoleCommand command)
+        public async ValueTask<ActionResult<Response>> UpdateUserRoleAsync([FromBody] UpdateUserRoleCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpDelete("{id}")]
-        public async ValueTask<ActionResult<Response>> DeleteUserAsync(DeleteUserCommand command)
+        public async ValueTask<ActionResult<Response>> DeleteUserAsync([FromBody] DeleteUserCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpGet]
-        public async ValueTask<ActionResult<IEnumerable<UserDTO>>> GetAllUsersAsync(GetAllUsersQuery command)
+        public async ValueTask<ActionResult<IEnumerable<UserDTO>>> GetAllUsersAsync([FromQuery] GetAllUsersQuery command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async ValueTask<ActionResult<UserDTO>> GetUserByIdAsync(GetUserByIdQuery command)
+        public async ValueTask<ActionResult<UserDTO>> GetUserByIdAsync([FromQuery] GetUserByIdQuery command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);

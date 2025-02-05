@@ -12,21 +12,21 @@ namespace UserService.API.Controllers
         private readonly IMediator _mediator = mediator;
 
         [HttpPost("Login")]
-        public async ValueTask<ActionResult<Response>> LoginUserAsync(LoginUserCommand command)
+        public async ValueTask<ActionResult<Response>> LoginUserAsync([FromBody] LoginUserCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpPost("SignUp")]
-        public async ValueTask<ActionResult<Response>> SignUpUserAsync(SignUpUserCommand command)
+        public async ValueTask<ActionResult<Response>> SignUpUserAsync([FromBody] SignUpUserCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpPost("EmailConfirmation")]
-        public async ValueTask<ActionResult<Response>> ConfirmEmailAsync(ConfirmEmailCommand command)
+        public async ValueTask<ActionResult<Response>> ConfirmEmailAsync([FromBody] ConfirmEmailCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
