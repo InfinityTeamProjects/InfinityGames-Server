@@ -29,7 +29,7 @@ public class RedisService : IRedisService
         if (value == RedisValue.Null)
             return default(T);
 
-        return JsonConvert.DeserializeObject<T>(value);
+        return JsonConvert.DeserializeObject<T>(value!);
     }
 
     public async ValueTask<bool> RemoveAsync(string key)
