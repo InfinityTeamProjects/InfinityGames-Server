@@ -54,6 +54,7 @@ public class DataSeeder(IConfiguration configuration, RoleManager<IdentityRole<G
                 Surname = surname,
                 UserName = username,
                 Email = email,
+                EmailConfirmed = true,
                 Wallet = 100000000000,
                 Birthday = DateFormatExtension.ToDateTime("2005/08/14"),
                 ProfilePicture = "https://ih1.redbubble.net/image.2955130987.9629/raf,360x360,075,t,fafafa:ca443f4786.jpg",

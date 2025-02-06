@@ -17,14 +17,16 @@ public class ConfirmEmailCommandHandler(ITokenService tokenService, IRedisServic
 
     public async Task<Response> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
     {
-        var verifyCode = await _redisService.GetAsync<VerifyCode>(request.Email);
+        var verificationCode = await _redisService.GetAsync<string>(request.Email);
 
-        if (verifyCode == null)
+        if (verificationCode == null)
             throw new CustomException(408, "Код подтверждения устарел!");
-        else if (verifyCode.Code != request.Code)
+        else if (verificationCode != request.Code)
             throw new CustomException(409, "Неверный код подтверждения!");
 
-        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        var user = await _userManager.Users.IgnoreQueryFilters()
+                                                .FirstOrDefaultAsync(u => u.Email == request.Email
+                                                                          && !u.IsDeleted);
 
         if (user == null)
             throw new NotFoundException("Пользователь не найден!");

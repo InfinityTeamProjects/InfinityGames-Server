@@ -3,7 +3,6 @@ using UserService.Domain.Entities.DTOs;
 
 namespace UserService.Application.UseCases.Users.Queries;
 
-public class GetUserByIdQuery : IRequest<UserDTO>
+public class GetAllUsersQuery : IRequest<IEnumerable<UserDTO>>
 {
-    public Guid Id { get; set; }
 }

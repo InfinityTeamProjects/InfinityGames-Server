@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using UserService.Application.Extensions;
 using UserService.Domain.Entities.Auth;
 using UserService.Domain.Entities.DTOs;
@@ -19,24 +20,50 @@ public class CreateUserCommandHandler(UserManager<User> userManager) : IRequestH
         if (await _userManager.FindByEmailAsync(request.Email) != null)
             throw new CustomException(400, "Пользователь с таким адресом электронной почты уже существует.");
 
-        var user = new User()
+        var user = await _userManager.Users.IgnoreQueryFilters()
+                                                .FirstOrDefaultAsync(u => u.Email == request.Email);
+
+        if (user != null)
         {
-            Name = request.Name,
-            Surname = request.Surname,
-            UserName = request.Username,
-            Birthday = DateFormatExtension.ToDateTime(request.Birthday),
-            Email = request.Email
-        };
+            user.Name = request.Name;
+            user.Surname = request.Surname;
+            user.UserName = request.Username;
+            user.Birthday = DateFormatExtension.ToDateTime(request.Birthday);
+            user.Email = request.Email;
+            user.EmailConfirmed = true;
+            
+            user.IsDeleted = false;
+            user.DeletedAt = null;
 
-        var creationResult = await _userManager.CreateAsync(user, request.Password);
+            string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-        if (!creationResult.Succeeded)
-            throw new Exception($"Ошибка при создании пользователя!\n{creationResult}");
+            var passwordChangeResult = await _userManager.ResetPasswordAsync(user, resetToken, request.Password);
 
-        var roleResult = await _userManager.AddToRoleAsync(user, "User");
+            if (!passwordChangeResult.Succeeded)
+                throw new Exception($"Ошибка при создании пользователя! {passwordChangeResult}");
+        }
+        else
+        {
+            user = new User()
+            {
+                Name = request.Name,
+                Surname = request.Surname,
+                UserName = request.Username,
+                Birthday = DateFormatExtension.ToDateTime(request.Birthday),
+                Email = request.Email,
+                EmailConfirmed = true
+            };
 
-        if (!roleResult.Succeeded)
-            throw new Exception($"Ошибка при создании пользователя!\n{roleResult}");
+            var creationResult = await _userManager.CreateAsync(user, request.Password);
+
+            if (!creationResult.Succeeded)
+                throw new Exception($"Ошибка при создании пользователя! {creationResult}");
+
+            var roleResult = await _userManager.AddToRoleAsync(user, "User");
+
+            if (!roleResult.Succeeded)
+                throw new Exception($"Ошибка при создании пользователя! {roleResult}");
+        }
 
         return new Response()
         {
